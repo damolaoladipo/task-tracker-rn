@@ -351,6 +351,22 @@ Loading?
                            `---> Login Screen --(valid email/password)---> Home Screen
 ```
 
+```mermaid
+flowchart TD
+    appStart[App Start] --> restoreSession[Restore Session]
+    restoreSession --> loading{Loading}
+    loading -->|Yes| spinner[Activity Indicator]
+    loading -->|No| hasUser{User in Context}
+    hasUser -->|Yes| homeScreen[Home Screen]
+    hasUser -->|No| walkthrough[Walkthrough Screen]
+    walkthrough --> signup[Signup Screen]
+    walkthrough --> login[Login Screen]
+    signup -->|Unique email| homeScreen
+    login -->|Valid email and password| homeScreen
+    homeScreen --> logoutScreen[Logout Screen]
+    logoutScreen --> login
+```
+
 ## Restore session flow
 
 Plain-text version:
@@ -379,6 +395,19 @@ AppInitialiser hides splash screen
 Router decides between Home Screen or Walkthrough Screen
 ```
 
+```mermaid
+flowchart TD
+    launch[App Launch] --> mount[UserState mounts]
+    mount --> readAuth[Read AUTH_USER from AsyncStorage]
+    readAuth --> hasStoredUser{Stored user found?}
+    hasStoredUser -->|Yes| setUser[Parse user and set it in context]
+    hasStoredUser -->|No| keepNull[Keep user as null]
+    setUser --> doneLoading[Set loading to false]
+    keepNull --> doneLoading
+    doneLoading --> hideSplash[AppInitialiser hides splash screen]
+    hideSplash --> route[Router decides between Home Screen or Walkthrough Screen]
+```
+
 ## Key implementation notes
 
 - Splash hiding is controlled from inside the provider tree so user loading is available before the splash disappears.
@@ -388,3 +417,15 @@ Router decides between Home Screen or Walkthrough Screen
   - email uniqueness is enforced
   - password is persisted locally for validation
   - existing accounts are reused across sessions
+
+## What I would improve with more time
+
+- Add real backend authentication and secure password handling instead of local mock auth storage.
+- Add task editing, deletion, and bulk actions beyond the current complete/incomplete flow.
+- Add due dates, reminders, and richer task metadata such as notes or priority.
+- Add automated test coverage for auth, restore-session, and task persistence flows.
+- Add stronger form validation and user-friendly error states for invalid email formats and edge cases.
+- Improve Android and iOS parity for typography and asset generation so visuals match more closely across devices.
+- Add dark mode, accessibility tuning, and larger-text support.
+- Add cloud sync so tasks and accounts are portable across devices.
+- Refine animation polish for transitions, bottom sheets, and task state updates.
