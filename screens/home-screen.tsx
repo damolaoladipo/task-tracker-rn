@@ -5,9 +5,9 @@ import {
   FlatList,
   ScrollView,
   Pressable,
-  SafeAreaView,
   ActivityIndicator,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useTasksContext } from '@/hooks/use-tasks-context';
 import { useUserContext } from '@/hooks/use-user-context';
@@ -17,7 +17,7 @@ import { TaskInput } from '@/components/task-input';
 import { CategoryCard } from '@/components/category-card';
 import { EmptyState } from '@/components/empty-state';
 import { mockCategories } from '@/_data/categories';
-import { Task } from '@/types/task';
+import { Task, TaskFilter } from '@/types/task';
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -31,14 +31,21 @@ export default function HomeScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-offwhite">
+    <SafeAreaView className="flex-1 bg-white">
       <Header userName={user?.name ?? ''} onLogout={handleLogout} />
+
       <ScrollView
         className="flex-1"
-        contentContainerStyle={{ paddingBottom: 32 }}
+        contentContainerStyle={{ paddingBottom: 40 }}
         showsVerticalScrollIndicator={false}
       >
+        {/* Filter tabs — sits between header and categories */}
+        <View className="px-5 mb-5">
+          <FilterTabs activeFilter={filter} onFilterChange={setFilter} />
+        </View>
+
         <CategoriesSection tasks={tasks} />
+
         <TaskListSection
           filteredTasks={filteredTasks}
           filter={filter}
@@ -57,18 +64,41 @@ export default function HomeScreen() {
 function Header({ userName, onLogout }: { userName: string; onLogout: () => void }) {
   const firstName = userName.split(' ')[0];
   return (
-    <View className="flex-row items-center justify-between px-5 py-4 bg-offwhite">
-      <View>
-        <Text className="text-xl font-bold text-primary">Home</Text>
-        <Text className="text-sm text-muted">Hello, {firstName || 'there'}</Text>
+    <View
+      style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingHorizontal: 20,
+        paddingVertical: 14,
+      }}
+    >
+      {/* Hamburger icon */}
+      <View style={{ gap: 4, justifyContent: 'center' }}>
+        <View style={{ width: 14, height: 2, backgroundColor: '#c4c4c4', borderRadius: 2 }} />
+        <View style={{ width: 14, height: 2, backgroundColor: '#c4c4c4', borderRadius: 2 }} />
+        <View style={{ width: 14, height: 2, backgroundColor: '#c4c4c4', borderRadius: 2 }} />
       </View>
+
+      <Text style={{ fontSize: 20, fontWeight: '700', color: '#000000' }}>Home</Text>
+
+      {/* Profile avatar — tap to log out */}
       <Pressable
         onPress={onLogout}
-        className="w-10 h-10 rounded-full bg-primary items-center justify-center"
+        style={{
+          width: 31,
+          height: 31,
+          borderRadius: 16,
+          backgroundColor: '#242424',
+          borderWidth: 2,
+          borderColor: '#ffffff',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
         accessibilityLabel="Log out"
-        accessibilityHint="Tap to sign out of your account"
+        accessibilityHint="Tap to sign out"
       >
-        <Text className="text-cream text-base font-bold">
+        <Text style={{ color: '#ffffff', fontSize: 13, fontWeight: '700' }}>
           {(firstName?.[0] ?? 'U').toUpperCase()}
         </Text>
       </Pressable>
@@ -77,12 +107,51 @@ function Header({ userName, onLogout }: { userName: string; onLogout: () => void
 }
 
 function CategoriesSection({ tasks }: { tasks: Task[] }) {
-  const taskCountByCategory = (categoryId: string) =>
+  const countForCategory = (categoryId: string) =>
     tasks.filter((t) => t.categoryId === categoryId).length;
 
   return (
-    <View className="mb-4">
-      <Text className="text-base font-semibold text-primary px-5 mb-3">Categories</Text>
+    <View className="mb-5">
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          paddingHorizontal: 20,
+          marginBottom: 12,
+        }}
+      >
+        <Text style={{ fontSize: 18, fontWeight: '700', color: '#000000' }}>Categories</Text>
+        <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>
+          {/* Filter icon button */}
+          <View
+            style={{
+              width: 31,
+              height: 31,
+              borderRadius: 16,
+              backgroundColor: '#fafafa',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Text style={{ fontSize: 13 }}>⊞</Text>
+          </View>
+          {/* Add button */}
+          <View
+            style={{
+              backgroundColor: '#242424',
+              borderRadius: 26,
+              width: 50,
+              height: 30,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Text style={{ color: '#ffffff', fontSize: 13, fontWeight: '700' }}>Add</Text>
+          </View>
+        </View>
+      </View>
+
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -92,7 +161,7 @@ function CategoriesSection({ tasks }: { tasks: Task[] }) {
           <CategoryCard
             key={category.id}
             category={category}
-            taskCount={taskCountByCategory(category.id)}
+            taskCount={countForCategory(category.id)}
           />
         ))}
       </ScrollView>
@@ -102,28 +171,59 @@ function CategoriesSection({ tasks }: { tasks: Task[] }) {
 
 interface TaskListSectionProps {
   filteredTasks: Task[];
-  filter: import('@/types/task').TaskFilter;
+  filter: TaskFilter;
   loading: boolean;
   onAdd: (title: string) => Promise<void>;
   onToggle: (id: string) => Promise<void>;
-  onFilterChange: (filter: import('@/types/task').TaskFilter) => void;
+  onFilterChange: (filter: TaskFilter) => void;
 }
 
 function TaskListSection({
   filteredTasks,
-  filter,
   loading,
   onAdd,
   onToggle,
-  onFilterChange,
 }: TaskListSectionProps) {
   return (
-    <View className="px-5">
-      <Text className="text-base font-semibold text-primary mb-3">My Tasks</Text>
-      <FilterTabs activeFilter={filter} onFilterChange={onFilterChange} />
-      <View className="mt-4">
-        <TaskInput onAdd={onAdd} />
+    <View
+      style={{
+        backgroundColor: '#fafafa',
+        borderTopLeftRadius: 45,
+        borderTopRightRadius: 45,
+        paddingHorizontal: 20,
+        paddingTop: 24,
+        minHeight: 300,
+      }}
+    >
+      {/* Section header */}
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginBottom: 16,
+        }}
+      >
+        <Text style={{ fontSize: 18, fontWeight: '700', color: '#000000' }}>Task List</Text>
+        <View
+          style={{
+            backgroundColor: '#242424',
+            borderRadius: 100,
+            width: 101,
+            height: 43,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <Text style={{ color: '#ffffff', fontSize: 12, fontWeight: '700' }}>Add Task</Text>
+        </View>
       </View>
+
+      {/* Divider */}
+      <View style={{ height: 1, backgroundColor: '#d7d7d7', marginBottom: 16 }} />
+
+      {/* Task input */}
+      <TaskInput onAdd={onAdd} />
 
       {loading ? (
         <View className="py-10 items-center">
@@ -137,7 +237,7 @@ function TaskListSection({
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => <TaskItem task={item} onToggle={onToggle} />}
           scrollEnabled={false}
-          contentContainerStyle={{ paddingTop: 4 }}
+          contentContainerStyle={{ paddingTop: 4, paddingBottom: 16 }}
         />
       )}
     </View>

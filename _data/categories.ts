@@ -1,8 +1,28 @@
 import { Category } from '@/types/task';
 
 export const mockCategories: Category[] = [
-  { id: 'work', label: 'Work', color: '#a8c8f8', icon: 'briefcase' },
-  { id: 'personal', label: 'Personal', color: '#f7e96b', icon: 'person' },
-  { id: 'health', label: 'Health', color: '#c8f0d8', icon: 'heart' },
-  { id: 'shopping', label: 'Shopping', color: '#f8c8d4', icon: 'cart' },
+  {
+    id: 'works',
+    label: 'Works',
+    color: '#fffce3',
+    strokeColor: '#fff9c6',
+    iconColor: '#ffe600',
+    icon: 'briefcase',
+  },
+  {
+    id: 'sport',
+    label: 'Sport',
+    color: '#e9ffe3',
+    strokeColor: '#c6ffdd',
+    iconColor: '#4caf50',
+    icon: 'activity',
+  },
+  {
+    id: 'habits',
+    label: 'Habits',
+    color: '#e3e6ff',
+    strokeColor: '#c7c6ff',
+    iconColor: '#6270f0',
+    icon: 'repeat',
+  },
 ];

@@ -12,34 +12,50 @@ export function CategoryCard({ category, taskCount, onPress }: CategoryCardProps
   return (
     <Pressable
       onPress={onPress}
-      style={{ backgroundColor: category.color, width: 112, borderRadius: 16, padding: 16, marginRight: 12 }}
+      style={{
+        backgroundColor: category.color,
+        width: 112,
+        height: 136,
+        borderRadius: 16,
+        padding: 14,
+        marginRight: 12,
+        justifyContent: 'flex-end',
+      }}
     >
+      {/* Icon circle with colored stroke */}
       <View
         style={{
-          width: 36,
-          height: 36,
-          borderRadius: 18,
-          backgroundColor: 'rgba(255,255,255,0.6)',
+          width: 51,
+          height: 51,
+          borderRadius: 50,
+          backgroundColor: '#ffffff',
+          borderWidth: 2,
+          borderColor: category.strokeColor,
           alignItems: 'center',
           justifyContent: 'center',
           marginBottom: 12,
+          position: 'absolute',
+          top: 14,
+          left: 14,
         }}
       >
-        <Text style={{ fontSize: 18 }}>{getCategoryIcon(category.icon)}</Text>
+        <Text style={{ fontSize: 20 }}>{getCategoryEmoji(category.icon)}</Text>
       </View>
-      <Text style={{ fontSize: 13, fontWeight: '600', color: '#242424', marginBottom: 4 }}>
+      <Text style={{ fontSize: 16, fontWeight: '700', color: '#000000', marginBottom: 2 }}>
         {category.label}
       </Text>
-      <Text style={{ fontSize: 11, color: '#9e9e9e' }}>
+      <Text style={{ fontSize: 13, fontWeight: '500', color: '#757575' }}>
         {taskCount} {taskCount === 1 ? 'task' : 'tasks'}
       </Text>
     </Pressable>
   );
 }
 
-function getCategoryIcon(icon: string): string {
+function getCategoryEmoji(icon: string): string {
   const map: Record<string, string> = {
     briefcase: '💼',
+    activity: '🏃',
+    repeat: '🔄',
     person: '👤',
     heart: '❤️',
     cart: '🛒',

@@ -13,5 +13,7 @@ export interface Category {
   id: string;
   label: string;
   color: string;
+  strokeColor: string;
+  iconColor: string;
   icon: string;
 }
