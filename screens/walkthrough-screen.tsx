@@ -14,39 +14,40 @@ export default function WalkthroughScreen() {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fffce3' }}>
       <View style={{ flex: 1 }}>
-
         {/*
-         * Figma node 2:2746 — Decorative SVG illustration
-         * Exported at 331×673 covering the full visible decorative area of the screen.
-         * Positioned at (x:0, y:0) so the large white circle bleeds from the top-left
-         * exactly as in Figma. The SVG already contains both icon badges (Heart and Work).
+         * Figma node 2:2746 — Decorative SVG illustration.
+         * Keep it in its own top section so the copy sits below the artwork,
+         * matching the Figma walkthrough composition.
          */}
-        <View
-          pointerEvents="none"
-          style={{ position: 'absolute', top: 0, left: 0, width: 331, height: 673 }}
-        >
-          <DecorativeIllustration width={331} height={673} />
+        <View style={{ height: 438, overflow: 'hidden' }}>
+          <View
+            pointerEvents="none"
+            style={{ position: 'absolute', top: -6, left: 0, width: 331, height: 673 }}
+          >
+            <DecorativeIllustration width={331} height={673} />
+          </View>
         </View>
 
-        {/* Main content — text centered, CTA at bottom */}
         <View
           style={{
             flex: 1,
-            paddingHorizontal: 24,
-            justifyContent: 'space-between',
+            paddingHorizontal: 20,
+            paddingTop: 34,
             paddingBottom: 40,
+            alignItems: 'center',
+            justifyContent: 'space-between',
           }}
         >
-          {/* Title + subtitle — vertically centered in the upper half */}
-          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', paddingTop: 60 }}>
+          <View style={{ width: 335, alignItems: 'center' }}>
             <Text
               style={{
                 fontSize: 26,
                 fontWeight: '700',
                 color: '#000000',
                 textAlign: 'center',
-                lineHeight: 36,
+                lineHeight: 35.6,
                 marginBottom: 16,
+                width: 208,
               }}
             >
               Plan your Day{'\n'}in Details
@@ -58,11 +59,11 @@ export default function WalkthroughScreen() {
                 color: '#606060',
                 textAlign: 'center',
                 letterSpacing: 0.64,
-                lineHeight: 21,
-                maxWidth: 280,
+                lineHeight: 21.26,
+                width: 335,
               }}
             >
-              There are many variations of passages of Lorem Ipsum available.
+              There are many variations of passagesThere are many variations.
             </Text>
           </View>
 
@@ -70,7 +71,7 @@ export default function WalkthroughScreen() {
            * CTA — Figma node 103:123 (Logo.png)
            * 84×84 PNG: outer ring (stroke #b0b0b0) + inner dark circle (#242424) + arrow-right
            */}
-          <View style={{ alignItems: 'center', marginBottom: 24 }}>
+          <View style={{ alignItems: 'center', marginTop: 40 }}>
             <Pressable
               onPress={handleGetStarted}
               accessibilityLabel="Get started"

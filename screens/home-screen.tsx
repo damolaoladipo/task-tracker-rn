@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -6,9 +6,10 @@ import {
   ScrollView,
   Pressable,
   ActivityIndicator,
+  Modal,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Href, useRouter } from 'expo-router';
 import { useTasksContext } from '@/hooks/use-tasks-context';
 import { useUserContext } from '@/hooks/use-user-context';
 import { FilterTabs } from '@/components/filter-tabs';
@@ -21,18 +22,25 @@ import { Task, TaskFilter } from '@/types/task';
 
 export default function HomeScreen() {
   const router = useRouter();
-  const { user, logout } = useUserContext();
+  const insets = useSafeAreaInsets();
+  const { user } = useUserContext();
   const { filteredTasks, filter, loading, addTask, toggleTask, setFilter, tasks } =
     useTasksContext();
+  const safeTasks = tasks ?? [];
+  const safeFilteredTasks = filteredTasks ?? [];
+  const [isProfileSheetVisible, setIsProfileSheetVisible] = useState(false);
 
-  const handleLogout = async () => {
-    await logout();
-    router.replace('/(auth)/login');
+  const handleLogoutPress = () => {
+    setIsProfileSheetVisible(false);
+    router.push('/(auth)/logout' as Href);
   };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#ffffff' }}>
-      <Header userName={user?.name ?? ''} onLogout={handleLogout} />
+      <Header
+        userName={user?.name ?? ''}
+        onAvatarPress={() => setIsProfileSheetVisible(true)}
+      />
 
       <ScrollView
         style={{ flex: 1 }}
@@ -44,25 +52,33 @@ export default function HomeScreen() {
           <FilterTabs activeFilter={filter} onFilterChange={setFilter} />
         </View>
 
-        <CategoriesSection tasks={tasks} />
+        <CategoriesSection tasks={safeTasks} />
 
         <TaskListSection
-          filteredTasks={filteredTasks}
+          filteredTasks={safeFilteredTasks}
           filter={filter}
           loading={loading}
           onAdd={addTask}
           onToggle={toggleTask}
           onFilterChange={setFilter}
-          onSelectAll={() => filteredTasks.forEach((t) => !t.completed && toggleTask(t.id))}
+          onSelectAll={() => safeFilteredTasks.forEach((t) => !t.completed && toggleTask(t.id))}
         />
       </ScrollView>
+
+      <ProfileActionSheet
+        visible={isProfileSheetVisible}
+        userName={user?.name ?? ''}
+        bottomInset={insets.bottom}
+        onClose={() => setIsProfileSheetVisible(false)}
+        onLogout={handleLogoutPress}
+      />
     </SafeAreaView>
   );
 }
 
 // --- Sub-components ---
 
-function Header({ userName, onLogout }: { userName: string; onLogout: () => void }) {
+function Header({ userName, onAvatarPress }: { userName: string; onAvatarPress: () => void }) {
   const firstName = userName.split(' ')[0];
   return (
     <View
@@ -88,9 +104,9 @@ function Header({ userName, onLogout }: { userName: string; onLogout: () => void
 
       <Text style={{ fontSize: 20, fontWeight: '700', color: '#000000' }}>Home</Text>
 
-      {/* Profile avatar — 31x31, white stroke, tap to log out */}
+      {/* Profile avatar — opens bottom sheet actions */}
       <Pressable
-        onPress={onLogout}
+        onPress={onAvatarPress}
         style={{
           width: 31,
           height: 31,
@@ -102,13 +118,106 @@ function Header({ userName, onLogout }: { userName: string; onLogout: () => void
           justifyContent: 'center',
         }}
         accessibilityLabel="Log out"
-        accessibilityHint="Tap to sign out"
+        accessibilityHint="Opens profile actions"
       >
         <Text style={{ color: '#ffffff', fontSize: 12, fontWeight: '700' }}>
           {(firstName?.[0] ?? 'U').toUpperCase()}
         </Text>
       </Pressable>
     </View>
+  );
+}
+
+interface ProfileActionSheetProps {
+  visible: boolean;
+  userName: string;
+  bottomInset: number;
+  onClose: () => void;
+  onLogout: () => void;
+}
+
+function ProfileActionSheet({
+  visible,
+  userName,
+  bottomInset,
+  onClose,
+  onLogout,
+}: ProfileActionSheetProps) {
+  const firstName = userName.split(' ')[0] || 'User';
+
+  return (
+    <Modal
+      visible={visible}
+      transparent
+      animationType="slide"
+      onRequestClose={onClose}
+    >
+      <View style={{ flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.28)' }}>
+        <Pressable style={{ flex: 1 }} onPress={onClose} accessibilityLabel="Close profile menu" />
+
+        <View
+          style={{
+            backgroundColor: '#ffffff',
+            borderTopLeftRadius: 28,
+            borderTopRightRadius: 28,
+            paddingHorizontal: 24,
+            paddingTop: 16,
+            paddingBottom: Math.max(bottomInset, 16) + 8,
+          }}
+        >
+          <View
+            style={{
+              alignSelf: 'center',
+              width: 42,
+              height: 4,
+              borderRadius: 999,
+              backgroundColor: '#d7d7d7',
+              marginBottom: 18,
+            }}
+          />
+
+          <Text style={{ fontSize: 18, fontWeight: '700', color: '#000000', marginBottom: 4 }}>
+            {firstName}
+          </Text>
+          <Text style={{ fontSize: 14, color: '#757575', marginBottom: 20 }}>
+            Profile actions
+          </Text>
+
+          <Pressable
+            onPress={onClose}
+            style={{
+              height: 54,
+              borderRadius: 18,
+              backgroundColor: '#fafafa',
+              paddingHorizontal: 18,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginBottom: 12,
+            }}
+          >
+            <Text style={{ fontSize: 16, fontWeight: '600', color: '#242424' }}>Close</Text>
+            <Text style={{ fontSize: 18, color: '#757575' }}>×</Text>
+          </Pressable>
+
+          <Pressable
+            onPress={onLogout}
+            style={{
+              height: 54,
+              borderRadius: 18,
+              backgroundColor: '#fff1f1',
+              paddingHorizontal: 18,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
+            <Text style={{ fontSize: 16, fontWeight: '600', color: '#d14343' }}>Logout</Text>
+            <Text style={{ fontSize: 18, color: '#d14343' }}>→</Text>
+          </Pressable>
+        </View>
+      </View>
+    </Modal>
   );
 }
 
@@ -141,21 +250,9 @@ function CategoriesSection({ tasks }: { tasks: Task[] }) {
               justifyContent: 'center',
             }}
           >
-            <Text style={{ fontSize: 12, color: '#757575' }}>≡</Text>
+            <Text style={{ fontSize: 16, color: '#757575', lineHeight: 16 }}>•••</Text>
           </View>
-          {/* Add button — 50x30, #242424, cornerRadius 26 */}
-          <View
-            style={{
-              backgroundColor: '#242424',
-              borderRadius: 26,
-              width: 50,
-              height: 30,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <Text style={{ color: '#ffffff', fontSize: 13, fontWeight: '700' }}>Add</Text>
-          </View>
+          
         </View>
       </View>
 
@@ -214,18 +311,6 @@ function TaskListSection({
         }}
       >
         <Text style={{ fontSize: 18, fontWeight: '700', color: '#000000' }}>Task List</Text>
-        <View
-          style={{
-            backgroundColor: '#242424',
-            borderRadius: 100,
-            width: 101,
-            height: 43,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <Text style={{ color: '#ffffff', fontSize: 12, fontWeight: '700' }}>Add Task</Text>
-        </View>
       </View>
 
       {/* Divider */}

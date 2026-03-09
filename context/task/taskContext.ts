@@ -11,6 +11,14 @@ interface TaskContextProps {
   setFilter: (filter: TaskFilter) => void;
 }
 
-const TaskContext = createContext<TaskContextProps>({} as TaskContextProps);
+const TaskContext = createContext<TaskContextProps>({
+  tasks: [],
+  filteredTasks: [],
+  filter: 'all',
+  loading: false,
+  addTask: async () => {},
+  toggleTask: async () => {},
+  setFilter: () => {},
+});
 
 export default TaskContext;
