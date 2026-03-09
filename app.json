@@ -4,11 +4,11 @@
     "slug": "task-tracker-rn",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/Logo.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/Logo.png",
       "resizeMode": "contain",
       "backgroundColor": "#fffce3"
     },
@@ -17,15 +17,13 @@
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#fffce3",
-        "foregroundImage": "./assets/android-icon-foreground.png",
-        "backgroundImage": "./assets/android-icon-background.png",
-        "monochromeImage": "./assets/android-icon-monochrome.png"
+        "foregroundImage": "./assets/Logo.png",
+        "backgroundColor": "#fffce3"
       },
       "predictiveBackGestureEnabled": false
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/Logo.png"
     },
     "plugins": [
       "expo-router",
