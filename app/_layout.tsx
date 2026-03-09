@@ -1,7 +1,12 @@
 import '../global.css';
 import React, { useEffect } from 'react';
+import { LogBox } from 'react-native';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
+
+// expo-router / react-navigation internals still reference the deprecated RN
+// SafeAreaView. Our own code uses react-native-safe-area-context throughout.
+LogBox.ignoreLogs(['SafeAreaView has been deprecated']);
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import UserState from '@/context/user/UserState';
 import TaskState from '@/context/task/TaskState';
