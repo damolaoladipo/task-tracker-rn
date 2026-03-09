@@ -1,7 +1,8 @@
 import React from 'react';
-import { View, Text, Pressable } from 'react-native';
+import { View, Text, Pressable, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import Decorative from '@/assets/Decorative.svg';
 
 export default function WalkthroughScreen() {
   const router = useRouter();
@@ -12,123 +13,32 @@ export default function WalkthroughScreen() {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fffce3' }}>
-      <View style={{ flex: 1, position: 'relative' }}>
+      <View style={{ flex: 1 }}>
 
         {/*
-         * Figma node 2:2746 — Decorative Group 2
-         * A 475x475 white circle illustration group that bleeds from the top-left.
-         * Screen-relative position: starts at (-144, -55), visible portion 0→331 × 0→420
-         * Rendered as a large white circle clipped to the screen edge.
+         * Figma node 2:2746 — Decorative SVG illustration
+         * Exported at 331×673 covering the full visible decorative area of the screen.
+         * Positioned at (x:0, y:0) so the large white circle bleeds from the top-left
+         * exactly as in Figma. The SVG already contains both icon badges (Heart and Work).
          */}
         <View
           pointerEvents="none"
-          style={{
-            position: 'absolute',
-            top: -55,
-            left: -144,
-            width: 475,
-            height: 475,
-            borderRadius: 238,
-            backgroundColor: '#ffffff',
-            opacity: 0.6,
-          }}
-        />
-
-        {/* Heart icon badge — Frame 20: 51×51, white fill, stroke #c6ffdd, at screen (37, 108) */}
-        <View
-          pointerEvents="none"
-          style={{
-            position: 'absolute',
-            top: 108,
-            left: 37,
-            width: 51,
-            height: 51,
-            borderRadius: 26,
-            backgroundColor: '#ffffff',
-            borderWidth: 1.5,
-            borderColor: '#c6ffdd',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
+          style={{ position: 'absolute', top: 0, left: 0, width: 331, height: 673 }}
         >
-          <Text style={{ fontSize: 22 }}>❤️</Text>
+          <Decorative width={331} height={673} />
         </View>
 
-        {/* Work icon badge — Frame 19: 51×51, white fill, stroke #fff9c6, at screen (243, 108) */}
+        {/* Main content — text centered, CTA at bottom */}
         <View
-          pointerEvents="none"
           style={{
-            position: 'absolute',
-            top: 108,
-            left: 243,
-            width: 51,
-            height: 51,
-            borderRadius: 26,
-            backgroundColor: '#ffffff',
-            borderWidth: 1.5,
-            borderColor: '#fff9c6',
-            alignItems: 'center',
-            justifyContent: 'center',
+            flex: 1,
+            paddingHorizontal: 24,
+            justifyContent: 'space-between',
+            paddingBottom: 40,
           }}
         >
-          <Text style={{ fontSize: 22 }}>💼</Text>
-        </View>
-
-        {/* Small accent dots — Iconly/Bulk/Image (#6270f0), ~14×14 */}
-        <View
-          pointerEvents="none"
-          style={{
-            position: 'absolute',
-            top: 209,
-            left: 46,
-            width: 14,
-            height: 14,
-            borderRadius: 7,
-            backgroundColor: '#6270f0',
-          }}
-        />
-        <View
-          pointerEvents="none"
-          style={{
-            position: 'absolute',
-            top: 438,
-            left: 311,
-            width: 14,
-            height: 14,
-            borderRadius: 7,
-            backgroundColor: '#6270f0',
-          }}
-        />
-
-        {/* Small heart accent dots — Iconly/Bulk/Heart, ~14×14 */}
-        <View
-          pointerEvents="none"
-          style={{
-            position: 'absolute',
-            top: 168,
-            left: 199,
-            width: 14,
-            height: 14,
-            borderRadius: 7,
-            backgroundColor: '#c6ffdd',
-          }}
-        />
-        <View
-          pointerEvents="none"
-          style={{
-            position: 'absolute',
-            top: 659,
-            left: 51,
-            width: 14,
-            height: 14,
-            borderRadius: 7,
-            backgroundColor: '#fff9c6',
-          }}
-        />
-
-        {/* Main content */}
-        <View style={{ flex: 1, paddingHorizontal: 24, justifyContent: 'space-between', paddingBottom: 40 }}>
-          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', paddingTop: 80 }}>
+          {/* Title + subtitle — vertically centered in the upper half */}
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', paddingTop: 60 }}>
             <Text
               style={{
                 fontSize: 26,
@@ -156,32 +66,21 @@ export default function WalkthroughScreen() {
             </Text>
           </View>
 
-          {/* CTA — outer ring 84×84 border #b0b0b0 + inner circle 67×67 fill #242424 + arrow */}
+          {/*
+           * CTA — Figma node 103:123 (Logo.png)
+           * 84×84 PNG: outer ring (stroke #b0b0b0) + inner dark circle (#242424) + arrow-right
+           */}
           <View style={{ alignItems: 'center', marginBottom: 24 }}>
             <Pressable
               onPress={handleGetStarted}
-              style={{
-                width: 84,
-                height: 84,
-                borderRadius: 42,
-                borderWidth: 1,
-                borderColor: '#b0b0b0',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
+              accessibilityLabel="Get started"
+              accessibilityRole="button"
             >
-              <View
-                style={{
-                  width: 67,
-                  height: 67,
-                  borderRadius: 34,
-                  backgroundColor: '#242424',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <Text style={{ color: '#ffffff', fontSize: 22, fontWeight: '700' }}>→</Text>
-              </View>
+              <Image
+                source={require('@/assets/Logo.png')}
+                style={{ width: 84, height: 84 }}
+                resizeMode="contain"
+              />
             </Pressable>
 
             <Pressable
