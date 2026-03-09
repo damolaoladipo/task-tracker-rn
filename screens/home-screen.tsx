@@ -31,16 +31,16 @@ export default function HomeScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#ffffff' }}>
       <Header userName={user?.name ?? ''} onLogout={handleLogout} />
 
       <ScrollView
-        className="flex-1"
+        style={{ flex: 1 }}
         contentContainerStyle={{ paddingBottom: 40 }}
         showsVerticalScrollIndicator={false}
       >
-        {/* Filter tabs — sits between header and categories */}
-        <View className="px-5 mb-5">
+        {/* Filter tabs — between header and categories per Figma layout */}
+        <View style={{ paddingHorizontal: 34, marginBottom: 20 }}>
           <FilterTabs activeFilter={filter} onFilterChange={setFilter} />
         </View>
 
@@ -53,6 +53,7 @@ export default function HomeScreen() {
           onAdd={addTask}
           onToggle={toggleTask}
           onFilterChange={setFilter}
+          onSelectAll={() => filteredTasks.forEach((t) => !t.completed && toggleTask(t.id))}
         />
       </ScrollView>
     </SafeAreaView>
@@ -69,20 +70,25 @@ function Header({ userName, onLogout }: { userName: string; onLogout: () => void
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        paddingHorizontal: 20,
-        paddingVertical: 14,
+        paddingHorizontal: 34,
+        paddingTop: 14,
+        paddingBottom: 10,
+        height: 55,
       }}
     >
-      {/* Hamburger icon */}
-      <View style={{ gap: 4, justifyContent: 'center' }}>
-        <View style={{ width: 14, height: 2, backgroundColor: '#c4c4c4', borderRadius: 2 }} />
-        <View style={{ width: 14, height: 2, backgroundColor: '#c4c4c4', borderRadius: 2 }} />
-        <View style={{ width: 14, height: 2, backgroundColor: '#c4c4c4', borderRadius: 2 }} />
+      {/* Hamburger icon — 3 bars, each 14x2, cornerRadius 59, #c4c4c4, spaced 5px vertically */}
+      <View style={{ width: 14, gap: 5 }}>
+        {[0, 1, 2].map((i) => (
+          <View
+            key={i}
+            style={{ width: 14, height: 2, backgroundColor: '#c4c4c4', borderRadius: 59 }}
+          />
+        ))}
       </View>
 
       <Text style={{ fontSize: 20, fontWeight: '700', color: '#000000' }}>Home</Text>
 
-      {/* Profile avatar — tap to log out */}
+      {/* Profile avatar — 31x31, white stroke, tap to log out */}
       <Pressable
         onPress={onLogout}
         style={{
@@ -98,7 +104,7 @@ function Header({ userName, onLogout }: { userName: string; onLogout: () => void
         accessibilityLabel="Log out"
         accessibilityHint="Tap to sign out"
       >
-        <Text style={{ color: '#ffffff', fontSize: 13, fontWeight: '700' }}>
+        <Text style={{ color: '#ffffff', fontSize: 12, fontWeight: '700' }}>
           {(firstName?.[0] ?? 'U').toUpperCase()}
         </Text>
       </Pressable>
@@ -111,19 +117,20 @@ function CategoriesSection({ tasks }: { tasks: Task[] }) {
     tasks.filter((t) => t.categoryId === categoryId).length;
 
   return (
-    <View className="mb-5">
+    <View style={{ marginBottom: 16 }}>
+      {/* Section title row */}
       <View
         style={{
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'space-between',
-          paddingHorizontal: 20,
+          paddingHorizontal: 34,
           marginBottom: 12,
         }}
       >
         <Text style={{ fontSize: 18, fontWeight: '700', color: '#000000' }}>Categories</Text>
         <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>
-          {/* Filter icon button */}
+          {/* Filter icon circle — 31x31, #fafafa fill */}
           <View
             style={{
               width: 31,
@@ -134,9 +141,9 @@ function CategoriesSection({ tasks }: { tasks: Task[] }) {
               justifyContent: 'center',
             }}
           >
-            <Text style={{ fontSize: 13 }}>⊞</Text>
+            <Text style={{ fontSize: 12, color: '#757575' }}>≡</Text>
           </View>
-          {/* Add button */}
+          {/* Add button — 50x30, #242424, cornerRadius 26 */}
           <View
             style={{
               backgroundColor: '#242424',
@@ -155,7 +162,7 @@ function CategoriesSection({ tasks }: { tasks: Task[] }) {
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ paddingHorizontal: 20 }}
+        contentContainerStyle={{ paddingHorizontal: 34 }}
       >
         {mockCategories.map((category) => (
           <CategoryCard
@@ -176,6 +183,7 @@ interface TaskListSectionProps {
   onAdd: (title: string) => Promise<void>;
   onToggle: (id: string) => Promise<void>;
   onFilterChange: (filter: TaskFilter) => void;
+  onSelectAll: () => void;
 }
 
 function TaskListSection({
@@ -183,6 +191,7 @@ function TaskListSection({
   loading,
   onAdd,
   onToggle,
+  onSelectAll,
 }: TaskListSectionProps) {
   return (
     <View
@@ -190,18 +199,18 @@ function TaskListSection({
         backgroundColor: '#fafafa',
         borderTopLeftRadius: 45,
         borderTopRightRadius: 45,
-        paddingHorizontal: 20,
+        paddingHorizontal: 34,
         paddingTop: 24,
-        minHeight: 300,
+        minHeight: 400,
       }}
     >
-      {/* Section header */}
+      {/* Section header — "Task List" + "Add Task" button (101x43) */}
       <View
         style={{
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'space-between',
-          marginBottom: 16,
+          marginBottom: 12,
         }}
       >
         <Text style={{ fontSize: 18, fontWeight: '700', color: '#000000' }}>Task List</Text>
@@ -226,19 +235,40 @@ function TaskListSection({
       <TaskInput onAdd={onAdd} />
 
       {loading ? (
-        <View className="py-10 items-center">
+        <View style={{ paddingVertical: 40, alignItems: 'center' }}>
           <ActivityIndicator size="large" color="#242424" />
         </View>
       ) : filteredTasks.length === 0 ? (
         <EmptyState />
       ) : (
-        <FlatList
-          data={filteredTasks}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => <TaskItem task={item} onToggle={onToggle} />}
-          scrollEnabled={false}
-          contentContainerStyle={{ paddingTop: 4, paddingBottom: 16 }}
-        />
+        <>
+          <FlatList
+            data={filteredTasks}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => <TaskItem task={item} onToggle={onToggle} />}
+            scrollEnabled={false}
+            contentContainerStyle={{ paddingTop: 4 }}
+          />
+
+          {/* "Select All Task" button — Figma: 151x43, #242424, cornerRadius 100 */}
+          <View style={{ alignItems: 'flex-end', marginTop: 12, marginBottom: 24 }}>
+            <Pressable
+              onPress={onSelectAll}
+              style={{
+                backgroundColor: '#242424',
+                borderRadius: 100,
+                width: 151,
+                height: 43,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Text style={{ color: '#ffffff', fontSize: 12, fontWeight: '700' }}>
+                Select All Task
+              </Text>
+            </Pressable>
+          </View>
+        </>
       )}
     </View>
   );

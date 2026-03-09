@@ -15,7 +15,7 @@ export const mockCategories: Category[] = [
     color: '#e9ffe3',
     strokeColor: '#c6ffdd',
     iconColor: '#4caf50',
-    icon: 'activity',
+    icon: 'heart',
   },
   {
     id: 'habits',
@@ -23,6 +23,6 @@ export const mockCategories: Category[] = [
     color: '#e3e6ff',
     strokeColor: '#c7c6ff',
     iconColor: '#6270f0',
-    icon: 'repeat',
+    icon: 'image',
   },
 ];

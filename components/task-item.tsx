@@ -16,13 +16,12 @@ export function TaskItem({ task, onToggle }: TaskItemProps) {
         backgroundColor: '#ffffff',
         borderRadius: 16,
         paddingHorizontal: 16,
-        paddingVertical: 14,
+        paddingVertical: 0,
         marginBottom: 10,
         flexDirection: 'row',
         alignItems: 'center',
         gap: 12,
-        // Figma: 307x57 — allow width to fill container
-        minHeight: 57,
+        height: 57,
         shadowColor: '#000',
         shadowOpacity: 0.04,
         shadowRadius: 4,
@@ -30,31 +29,24 @@ export function TaskItem({ task, onToggle }: TaskItemProps) {
         elevation: 1,
       }}
     >
-      {/* Left icon placeholder — category icon 24x24 */}
-      <View
-        style={{
-          width: 24,
-          height: 24,
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        <Text style={{ fontSize: 16 }}>{getCategoryEmoji(task.categoryId)}</Text>
+      {/* Left: category icon — Message for works, 3User for team tasks */}
+      <View style={{ width: 24, height: 24, alignItems: 'center', justifyContent: 'center' }}>
+        <Text style={{ fontSize: 16 }}>{getTaskIcon(task.categoryId)}</Text>
       </View>
 
-      {/* Task title */}
+      {/* Task title — line-through + muted when complete */}
       <Text
         className={cn(
-          'flex-1 text-base font-medium',
+          'flex-1',
           task.completed ? 'line-through text-muted' : 'text-primary'
         )}
         style={{ fontSize: 16, fontWeight: '500', lineHeight: 21 }}
-        numberOfLines={2}
+        numberOfLines={1}
       >
         {task.title}
       </Text>
 
-      {/* Right action icon — plus when incomplete, checkmark when complete */}
+      {/* Right: Plus icon when incomplete, checkmark when complete — 24x24 */}
       <Pressable
         onPress={() => onToggle(task.id)}
         style={{
@@ -71,11 +63,10 @@ export function TaskItem({ task, onToggle }: TaskItemProps) {
       >
         <Text
           style={{
-            color: task.completed ? '#ffffff' : '#757575',
-            fontSize: task.completed ? 12 : 18,
+            color: task.completed ? '#ffffff' : '#9e9e9e',
+            fontSize: task.completed ? 11 : 16,
             fontWeight: '700',
-            lineHeight: task.completed ? 14 : 20,
-            marginTop: task.completed ? 0 : -1,
+            lineHeight: task.completed ? 13 : 18,
           }}
         >
           {task.completed ? '✓' : '+'}
@@ -85,11 +76,15 @@ export function TaskItem({ task, onToggle }: TaskItemProps) {
   );
 }
 
-function getCategoryEmoji(categoryId?: string): string {
+/**
+ * Maps category IDs to display icons.
+ * Figma uses "Message" icon for works tasks (email check) and "3 User" icon for team tasks.
+ */
+function getTaskIcon(categoryId?: string): string {
   const map: Record<string, string> = {
-    works: '💼',
-    sport: '🏃',
-    habits: '🔄',
+    works: '✉️',   // Message icon — Figma: Iconly/Bulk/Message
+    sport: '🏃',   // Activity icon
+    habits: '🔄',  // Repeat icon
   };
   return map[categoryId ?? ''] ?? '📌';
 }
