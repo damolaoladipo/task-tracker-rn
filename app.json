@@ -25,6 +25,14 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-splash-screen"
+    ],
+    "scheme": "tasktracker",
+    "experiments": {
+      "typedRoutes": true
     }
   }
 }
