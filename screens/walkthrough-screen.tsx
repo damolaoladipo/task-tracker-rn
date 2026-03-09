@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, Pressable, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import Decorative from '@/assets/Decorative.svg';
+import { DecorativeIllustration } from '@/components/decorative-illustration';
 
 export default function WalkthroughScreen() {
   const router = useRouter();
@@ -25,7 +25,7 @@ export default function WalkthroughScreen() {
           pointerEvents="none"
           style={{ position: 'absolute', top: 0, left: 0, width: 331, height: 673 }}
         >
-          <Decorative width={331} height={673} />
+          <DecorativeIllustration width={331} height={673} />
         </View>
 
         {/* Main content — text centered, CTA at bottom */}
