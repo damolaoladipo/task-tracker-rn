@@ -2,24 +2,21 @@ import React, { useEffect } from 'react';
 import { ActivityIndicator, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useUserContext } from '@/hooks/use-user-context';
-import { useOnboarding } from '@/hooks/use-onboarding';
 
 export default function Index() {
   const router = useRouter();
-  const { user, loading: userLoading } = useUserContext();
-  const { isLoading: onboardingLoading, hasSeenWalkthrough } = useOnboarding();
+  const { user, loading } = useUserContext();
 
   useEffect(() => {
-    if (userLoading || onboardingLoading) return;
+    if (loading) return;
 
-    if (!hasSeenWalkthrough) {
-      router.replace('/(onboarding)/walkthrough');
-    } else if (!user) {
-      router.replace('/(auth)/login');
-    } else {
+    if (user) {
       router.replace('/(tabs)');
+    } else {
+      // Always show walkthrough when not signed in
+      router.replace('/(onboarding)/walkthrough');
     }
-  }, [userLoading, onboardingLoading, user, hasSeenWalkthrough]);
+  }, [loading, user]);
 
   return (
     <View className="flex-1 items-center justify-center bg-cream">
