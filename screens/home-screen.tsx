@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Href, useRouter } from 'expo-router';
+import { Entypo, Feather, MaterialIcons } from '@expo/vector-icons';
 import { useTasksContext } from '@/hooks/use-tasks-context';
 import { useUserContext } from '@/hooks/use-user-context';
 import { FilterTabs } from '@/components/filter-tabs';
@@ -197,7 +198,7 @@ function ProfileActionSheet({
             }}
           >
             <Text style={{ fontSize: 16, fontWeight: '600', color: '#242424' }}>Close</Text>
-            <Text style={{ fontSize: 18, color: '#757575' }}>×</Text>
+            <Feather name="x" size={18} color="#757575" />
           </Pressable>
 
           <Pressable
@@ -213,7 +214,7 @@ function ProfileActionSheet({
             }}
           >
             <Text style={{ fontSize: 16, fontWeight: '600', color: '#d14343' }}>Logout</Text>
-            <Text style={{ fontSize: 18, color: '#d14343' }}>→</Text>
+            <MaterialIcons name="logout" size={18} color="#d14343" />
           </Pressable>
         </View>
       </View>
@@ -250,7 +251,7 @@ function CategoriesSection({ tasks }: { tasks: Task[] }) {
               justifyContent: 'center',
             }}
           >
-            <Text style={{ fontSize: 16, color: '#757575', lineHeight: 16 }}>•••</Text>
+            <Entypo name="dots-three-horizontal" size={16} color="#757575" />
           </View>
           
         </View>

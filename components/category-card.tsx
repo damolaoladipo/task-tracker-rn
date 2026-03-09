@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, Pressable } from 'react-native';
+import { Feather, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { Category } from '@/types/task';
 
 interface CategoryCardProps {
@@ -37,7 +38,7 @@ export function CategoryCard({ category, taskCount, onPress }: CategoryCardProps
           marginBottom: 14,
         }}
       >
-        <Text style={{ fontSize: 20 }}>{getCategoryEmoji(category.icon)}</Text>
+        {getCategoryIcon(category.icon, category.iconColor)}
       </View>
 
       {/* Label — Helvetica Bold 16px */}
@@ -66,13 +67,19 @@ export function CategoryCard({ category, taskCount, onPress }: CategoryCardProps
   );
 }
 
-function getCategoryEmoji(icon: string): string {
-  const map: Record<string, string> = {
-    briefcase: '💼',
-    activity: '🏃',
-    repeat: '🔄',
-    heart: '❤️',
-    image: '🖼️',
-  };
-  return map[icon] ?? '📌';
+function getCategoryIcon(icon: string, color: string): React.ReactNode {
+  switch (icon) {
+    case 'briefcase':
+      return <Feather name="briefcase" size={20} color={color} />;
+    case 'activity':
+      return <Feather name="activity" size={20} color={color} />;
+    case 'repeat':
+      return <Feather name="repeat" size={20} color={color} />;
+    case 'heart':
+      return <Ionicons name="heart-outline" size={20} color={color} />;
+    case 'image':
+      return <MaterialCommunityIcons name="image-outline" size={20} color={color} />;
+    default:
+      return <Feather name="bookmark" size={20} color={color} />;
+  }
 }

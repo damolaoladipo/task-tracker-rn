@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, Pressable } from 'react-native';
+import { Feather, Ionicons } from '@expo/vector-icons';
 import { Task } from '@/types/task';
 import { cn } from '@/lib/utils';
 
@@ -31,7 +32,7 @@ export function TaskItem({ task, onToggle }: TaskItemProps) {
     >
       {/* Left: category icon — Message for works, 3User for team tasks */}
       <View style={{ width: 24, height: 24, alignItems: 'center', justifyContent: 'center' }}>
-        <Text style={{ fontSize: 16 }}>{getTaskIcon(task.categoryId)}</Text>
+        {getTaskIcon(task.categoryId)}
       </View>
 
       {/* Task title — line-through + muted when complete */}
@@ -61,16 +62,11 @@ export function TaskItem({ task, onToggle }: TaskItemProps) {
         }}
         hitSlop={8}
       >
-        <Text
-          style={{
-            color: task.completed ? '#ffffff' : '#9e9e9e',
-            fontSize: task.completed ? 11 : 16,
-            fontWeight: '700',
-            lineHeight: task.completed ? 13 : 18,
-          }}
-        >
-          {task.completed ? '✓' : '+'}
-        </Text>
+        {task.completed ? (
+          <Feather name="check" size={12} color="#ffffff" />
+        ) : (
+          <Feather name="plus" size={16} color="#9e9e9e" />
+        )}
       </Pressable>
     </Pressable>
   );
@@ -80,11 +76,15 @@ export function TaskItem({ task, onToggle }: TaskItemProps) {
  * Maps category IDs to display icons.
  * Figma uses "Message" icon for works tasks (email check) and "3 User" icon for team tasks.
  */
-function getTaskIcon(categoryId?: string): string {
-  const map: Record<string, string> = {
-    works: '✉️',   // Message icon — Figma: Iconly/Bulk/Message
-    sport: '🏃',   // Activity icon
-    habits: '🔄',  // Repeat icon
-  };
-  return map[categoryId ?? ''] ?? '📌';
+function getTaskIcon(categoryId?: string): React.ReactNode {
+  switch (categoryId) {
+    case 'works':
+      return <Feather name="mail" size={18} color="#242424" />;
+    case 'sport':
+      return <Ionicons name="fitness-outline" size={18} color="#242424" />;
+    case 'habits':
+      return <Feather name="repeat" size={18} color="#242424" />;
+    default:
+      return <Feather name="bookmark" size={18} color="#242424" />;
+  }
 }
